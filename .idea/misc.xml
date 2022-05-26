@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ASMIdeaPluginConfiguration">
+    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
+  <component name="ASMSmaliIdeaPluginConfiguration">
+    <asm skipDebug="true" skipFrames="true" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/drawable/bg_wheel_picker_border.xml" value="0.2515" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2485" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/activity_main.xml" value="0.16484375" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/wheel_picker_color.xml" value="0.2006340579710145" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/wheel_picker_linkage.xml" value="0.28940217391304346" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/wheel_picker_ratio.xml" value="0.22" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/wheel_picker_time.xml" value="0.28940217391304346" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/layout/wheel_picker_width.xml" value="0.16" />
+        <entry key="..\:/hecl/work_new/VVTest/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2485" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
