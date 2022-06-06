@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="WheelDefault">
+        <item name="wheel_visibleItemCount">3</item>
+        <item name="wheel_itemTextAlign">center</item>
+        <item name="wheel_itemSpace">20dp</item>
+        <item name="wheel_itemTextColor">#FF222222</item>
+        <item name="wheel_itemTextColorSelected">#FF000000</item>
+        <item name="wheel_itemTextSize">12sp</item>
+        <item name="wheel_itemTextSizeSelected">12sp</item>
+        <item name="wheel_itemTextBoldSelected">true</item>
+        <item name="wheel_sameWidthEnabled">false</item>
+        <item name="wheel_atmosphericEnabled">true</item>
+        <item name="wheel_curtainEnabled">false</item>
+        <item name="wheel_curtainColor">#FFDEDEDE</item>
+        <item name="wheel_curvedEnabled">true</item>
+        <item name="wheel_curvedMaxAngle">90</item>
+        <item name="wheel_cyclicEnabled">false</item>
+        <item name="wheel_indicatorEnabled">true</item>
+        <item name="wheel_indicatorColor">#FF111111</item>
+        <item name="wheel_indicatorSize">1dp</item>
+    </style>
+
+</resources>

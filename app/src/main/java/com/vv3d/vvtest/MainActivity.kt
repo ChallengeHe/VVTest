@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.vv3d.vvtest.databinding.ActivityMainBinding
@@ -21,7 +22,8 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private var mMediaPlayer: MediaPlayer = MediaPlayer()
     private var mMediaPlayerRedGreen: MediaPlayer = MediaPlayer()
-    private val isRedGreenVideo = false
+    private var isRedGreenVideo = false
+    private var isFirstPlayRedGreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +91,66 @@ class MainActivity : AppCompatActivity() {
             mGlMediaplayerRender.mColorBlue = if (checked) 1f else 0f
         }
 
-        binding.tvDeviceModel.text = "设备型号：${Build.MODEL}"
-        binding.tvDeviceSn.text = "设备SN：${Build.SERIAL}"
+        binding.tvDeviceModel.text = "设备型号:${Build.MODEL}"
+        binding.tvDeviceSn.text = "设备SN:${Build.SERIAL}"
         binding.tvDeviceResolution.text =
-            "分辨率：${resources.displayMetrics.widthPixels}x${resources.displayMetrics.heightPixels}@${resources.displayMetrics.densityDpi}dpi"
+            "分辨率:${resources.displayMetrics.widthPixels}x${resources.displayMetrics.heightPixels}@${resources.displayMetrics.densityDpi}dpi"
+
+        binding.btnRedGreen.setOnClickListener {
+            if (!isRedGreenVideo) {
+                (it as Button).text = getString(R.string.play_test_video)
+                isRedGreenVideo = true
+                if (isFirstPlayRedGreen) {
+                    binding.surfaceViewRedgreen.setEGLContextClientVersion(2)
+                    mGlMediaplayerRenderRedGreen = GL3DRender(this, mMediaPlayerRedGreen)
+                    binding.surfaceViewRedgreen.setRenderer(mGlMediaplayerRenderRedGreen)
+                    binding.surfaceViewRedgreen.holder.addCallback(object : SurfaceHolder.Callback {
+                        override fun surfaceCreated(p0: SurfaceHolder) {
+                            Log.e(TAG, "surfaceCreated: ")
+                        }
+
+                        override fun surfaceChanged(
+                            p0: SurfaceHolder,
+                            format: Int,
+                            width: Int,
+                            height: Int
+                        ) {
+                            mGlMediaplayerRenderRedGreen?.mWidth = width
+                            mGlMediaplayerRenderRedGreen?.mHeight = height
+                            binding.surfaceViewRedgreen.requestRender()
+                            binding.tvDeviceResolution.text =
+                                "分辨率:${width}x${height}@${resources.displayMetrics.densityDpi}dpi"
+                        }
+
+                        override fun surfaceDestroyed(p0: SurfaceHolder) {
+                            Log.e(TAG, "surfaceDestroyed: ")
+                        }
+
+                    })
+                    isFirstPlayRedGreen = false
+                } else {
+                    if (mMediaPlayerRedGreen != null) {
+                        mMediaPlayerRedGreen.start()
+                    }
+                }
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.pause()
+                }
+                binding.surfaceViewRedgreen.visibility = View.VISIBLE
+                binding.surfaceView.visibility = View.GONE
+            } else {
+                (it as Button).text = getString(R.string.play_red_green)
+                binding.surfaceViewRedgreen.visibility = View.GONE
+                binding.surfaceView.visibility = View.VISIBLE
+                if (mMediaPlayerRedGreen != null) {
+                    mMediaPlayerRedGreen.pause()
+                }
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.start()
+                }
+                isRedGreenVideo = false
+            }
+        }
     }
 
     private fun initRedGreenMediaPlayer() {
@@ -121,9 +179,9 @@ class MainActivity : AppCompatActivity() {
         mGlMediaplayerRender.setOnFrameAvailableListener {
             binding.surfaceView.requestRender()
         }
-        binding.surfaceView.holder.addCallback(object :SurfaceHolder.Callback{
+        binding.surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(p0: SurfaceHolder) {
-                Log.e(TAG, "surfaceCreated: ", )
+                Log.e(TAG, "surfaceCreated: ")
             }
 
             override fun surfaceChanged(p0: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -131,11 +189,11 @@ class MainActivity : AppCompatActivity() {
                 mGlMediaplayerRender.mHeight = height
                 binding.surfaceView.requestRender()
                 binding.tvDeviceResolution.text =
-                    "分辨率：${width}x${height}@${resources.displayMetrics.densityDpi}dpi"
+                    "分辨率:${width}x${height}@${resources.displayMetrics.densityDpi}dpi"
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder) {
-                Log.e(TAG, "surfaceDestroyed: ", )
+                Log.e(TAG, "surfaceDestroyed: ")
             }
 
         })
@@ -154,10 +212,19 @@ class MainActivity : AppCompatActivity() {
         binding.colorBlueWheelView.colorValue = OpenGLUtils.IndexB
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mMediaPlayer.stop()
+        mMediaPlayer.release()
+        mMediaPlayerRedGreen.stop()
+        mMediaPlayerRedGreen.release()
+    }
 
     private fun initMediaPlayer() {
         val assetMg = applicationContext.assets
-        val fileDescriptor = assetMg.openFd("redGreen.mp4")
+        //横竖屏播放相关视频
+        val fileDescriptor =
+            assetMg.openFd(if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) "land.mp4" else "port.mp4")
         mMediaPlayer.setDataSource(
             fileDescriptor.fileDescriptor,
             fileDescriptor.startOffset,
@@ -165,15 +232,13 @@ class MainActivity : AppCompatActivity() {
         )
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mMediaPlayer.isLooping = true
-        mMediaPlayer.setOnCompletionListener { // 在播放完毕被回调
-        }
     }
 
     private fun initWindowAttr() {
         val params = window.attributes
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-            val controller = window.decorView.windowInsetsController
+            val controller = window.decorView?.windowInsetsController
             controller?.hide(WindowInsets.Type.systemBars())
             controller?.systemBarsBehavior =
                 WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE

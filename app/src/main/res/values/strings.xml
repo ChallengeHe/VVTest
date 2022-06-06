@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VVTest</string>
+    <string name="play_red_green">红绿图</string>
+    <string name="play_test_video">测试视频</string>
 </resources>
